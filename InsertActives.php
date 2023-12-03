@@ -12,6 +12,10 @@ $Descripcion = filter_input(INPUT_POST, 'Descripcion', FILTER_SANITIZE_STRING);
 $Marca = filter_input(INPUT_POST, 'Marca', FILTER_SANITIZE_STRING);
 $Modelo = filter_input(INPUT_POST, 'Modelo', FILTER_SANITIZE_STRING);
 $Capacidad = filter_input(INPUT_POST, 'Capacidad', FILTER_SANITIZE_STRING);
+$Cuenta = filter_input(INPUT_POST, 'Cuenta', FILTER_SANITIZE_STRING);
+$Subcuenta = filter_input(INPUT_POST, 'Subcuenta', FILTER_SANITIZE_STRING);
+$Precio = filter_input(INPUT_POST, 'Precio', FILTER_VALIDATE_FLOAT); // Validar el campo Precio como un número de punto flotante
+
 if ($Capacidad=="") {
     $Capacidad = "No aplica";
 }
@@ -19,7 +23,7 @@ if ($Capacidad=="") {
 // Verificar si los datos son válidos
 if (
     $FechaIngreso && $OrdenCompra && $Estado && $Proveedor && $FacturaNumero &&
-    $Descripcion && $Marca && $Modelo && $Capacidad
+    $Descripcion && $Marca && $Modelo && $Capacidad && $Cuenta && $Subcuenta && is_numeric($Precio)
 ) {
     // Convertir los campos a mayúsculas
     $FechaIngreso = strtoupper($FechaIngreso);
@@ -31,16 +35,18 @@ if (
     $Marca = strtoupper($Marca);
     $Modelo = strtoupper($Modelo);
     $Capacidad = strtoupper($Capacidad);
+    $Cuenta = strtoupper($Cuenta);
+    $Subcuenta = strtoupper($Subcuenta);
 
     // Consulta SQL preparada para la inserción de datos
-    $query = "INSERT INTO activos (FechaIngreso, OrdenCompra, Estado, Proveedor, FacturaNumero, Descripcion, Marca, Modelo, Capacidad) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO activos (FechaIngreso, OrdenCompra, Estado, Proveedor, FacturaNumero, Descripcion, Marca, Modelo, Capacidad, Cuenta, Subcuenta, Precio) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Preparar la consulta
     if ($stmt = $connect->prepare($query)) {
         // Vincular parámetros y sus tipos
         $stmt->bind_param(
-            "sssssssss",
+            "sssssssssssd", // Cambio en el formato de los tipos de datos, 'd' para números de punto flotante
             $FechaIngreso,
             $OrdenCompra,
             $Estado,
@@ -49,7 +55,10 @@ if (
             $Descripcion,
             $Marca,
             $Modelo,
-            $Capacidad
+            $Capacidad,
+            $Cuenta,
+            $Subcuenta,
+            $Precio // Se agrega el campo Precio aquí
         );
 
         // Ejecutar la consulta preparada

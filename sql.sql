@@ -67,6 +67,7 @@ select * from dependencias;
 
 
 
+
 DELIMITER $$
 CREATE TRIGGER `GenerarCodigoDependencia` BEFORE INSERT ON `dependencias` FOR EACH ROW BEGIN
     declare str_len int default 8;
@@ -133,7 +134,7 @@ CREATE TRIGGER `GenerarCodigoLicencia` BEFORE INSERT ON `licencias` FOR EACH ROW
 END
 $$
 DELIMITER ;
-select * from licencias;
+select * from activos;
 
 
 CREATE TABLE asignacion_activos (
@@ -172,6 +173,51 @@ BEGIN
     WHERE CodigoActivo = NEW.CodigoActivo;
 END
 $$
+DELIMITER ;
+
+
+CREATE TABLE usuarios (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Usuario VARCHAR(255) NOT NULL,
+    ContrasenaHash VARCHAR(255) NOT NULL
+);
+insert into usuarios (Usuario,Contrasena)values('kevin','kevin');
+select * from usuarios;
+CREATE TABLE usuarios (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Usuario VARCHAR(255) NOT NULL,
+    Contrasena VARCHAR(255) NOT NULL
+);
+
+SELECT *FROM activos;
+
+select * from asignacion_activos;
+delete from activos where  Estado="Nuevo" or 0=0;
+
+ALTER TABLE activos
+ADD Cuenta VARCHAR(300),
+ADD Subcuenta VARCHAR(300);
+
+alter table activos 
+ADD Precio DECIMAL(18, 4)
+
+DELIMITER //
+CREATE TRIGGER generar_consecutivo BEFORE INSERT ON activos
+FOR EACH ROW
+BEGIN
+    DECLARE anio_mes CHAR(6);
+    DECLARE sec INT;
+
+    -- Obtener año y mes del sistema
+    SET anio_mes = DATE_FORMAT(NOW(), '%Y%m');
+
+    -- Obtener la secuencia actual
+    SELECT IFNULL(MAX(SUBSTRING(ConsecutivoNumero, 7))+1, 1) INTO sec FROM activos WHERE SUBSTRING(ConsecutivoNumero, 1, 6) = anio_mes;
+
+    -- Componer el nuevo consecutivo
+    SET NEW.ConsecutivoNumero = CONCAT(anio_mes, LPAD(sec, 4, '0'));
+END;
+//
 DELIMITER ;
 
 

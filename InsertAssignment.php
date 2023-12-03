@@ -15,15 +15,20 @@ $Marca = filter_input(INPUT_POST, 'Marca', FILTER_SANITIZE_STRING);
 $Modelo = filter_input(INPUT_POST, 'Modelo', FILTER_SANITIZE_STRING);
 $Capacidad = filter_input(INPUT_POST, 'Capacidad', FILTER_SANITIZE_STRING);
 $Dependencia = filter_input(INPUT_POST, 'Dependencia', FILTER_SANITIZE_STRING);
-$Empleado = filter_input(INPUT_POST, 'Empleado', FILTER_SANITIZE_STRING);
+$Identificacion = filter_input(INPUT_POST, 'Identificacion', FILTER_SANITIZE_STRING);
 $Cuenta = filter_input(INPUT_POST, 'Cuenta', FILTER_SANITIZE_STRING);
 $Subcuenta = filter_input(INPUT_POST, 'Subcuenta', FILTER_SANITIZE_STRING);
+$PrimerNombre = filter_input(INPUT_POST, 'PrimerNombre', FILTER_SANITIZE_STRING);
+$PrimerApellido = filter_input(INPUT_POST, 'PrimerApellido', FILTER_SANITIZE_STRING);
+
+
+
 
 // Verificar si los datos son válidos
 if (
     $FechaAsignacion && $CodigoActivo && $FechaIngreso && $OrdenCompra && $FacturaNumero &&
     $Estado && $Proveedor && $Descripcion && $Marca && $Modelo && $Capacidad &&
-    $Dependencia && $Empleado && $Cuenta && $Subcuenta
+    $Dependencia && $Identificacion && $Cuenta && $Subcuenta && $PrimerNombre &&$PrimerApellido
 ) {
     // Convertir los campos a mayúsculas
     $FechaAsignacion = strtoupper($FechaAsignacion);
@@ -38,20 +43,20 @@ if (
     $Modelo = strtoupper($Modelo);
     $Capacidad = strtoupper($Capacidad);
     $Dependencia = strtoupper($Dependencia);
-    $Empleado = strtoupper($Empleado);
+    $Identificacion = strtoupper($Identificacion);
     $Cuenta = strtoupper($Cuenta);
     $Subcuenta = strtoupper($Subcuenta);
+    $PrimerNombre = strtoupper($PrimerNombre);
+    $PrimerApellido = strtoupper($PrimerApellido);
 
-    // Consulta SQL preparada para la inserción de datos
+
     $query = "INSERT INTO asignacion_activos (FechaAsignacion, CodigoActivo, FechaIngreso, OrdenCompra, FacturaNumero, 
-     Estado, Proveedor, Descripcion, Marca, Modelo, Capacidad, Dependencia, Empleado, Cuenta, Subcuenta) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+       Estado, Proveedor, Descripcion, Marca, Modelo, Capacidad, Dependencia, Identificacion, Cuenta, Subcuenta,PrimerNombre, PrimerApellido) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    // Preparar la consulta
     if ($stmt = $connect->prepare($query)) {
-        // Vincular parámetros y sus tipos
         $stmt->bind_param(
-            "sssssssssssssss",
+            "sssssssssssssssss",
             $FechaAsignacion,
             $CodigoActivo,
             $FechaIngreso,
@@ -64,9 +69,11 @@ if (
             $Modelo,
             $Capacidad,
             $Dependencia,
-            $Empleado,
+            $Identificacion,
             $Cuenta,
-            $Subcuenta
+            $Subcuenta,
+            $PrimerNombre,
+            $PrimerApellido
         );
 
         // Ejecutar la consulta preparada
